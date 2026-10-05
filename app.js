@@ -1,0 +1,32 @@
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let data=JSON.parse(localStorage.getItem('bmi-data')||'null')||{posts:[],projects:[],vault:[]};
+const quotes=["Brian. You own a piano. Use it.","The song cannot release itself, Brian.","Somewhere, your 14 future listeners are waiting.","A draft is just a song wearing pyjamas. Wake it up.","POST THE PIANO VIDEO.","Perfectionism has been denied entry to the premises.","The algorithm has not heard from you. It is beginning to worry.","One chorus today is still one chorus more than yesterday."];
+function persist(){localStorage.setItem('bmi-data',JSON.stringify(data));render()}
+function showTab(id){$$('.page,.tab').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$('.tab[data-tab="'+id+'"]').classList.add('active');scrollTo({top:0,behavior:'smooth'})}
+$$('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function openPost(){let d=new Date();d.setDate(d.getDate()+1);$('#postDate').value=d.toISOString().slice(0,10);$('#postModal').showModal()}
+function openProject(){$('#projectModal').showModal()} function openVault(){$('#vaultModal').showModal()}
+function savePost(){let t=$('#postTitle').value.trim();if(!t)return;data.posts.push({id:Date.now(),title:t,platform:$('#postPlatform').value,status:$('#postStatus').value,date:$('#postDate').value,time:$('#postTime').value,project:$('#postProject').value});$('#postTitle').value='';$('#postModal').close();persist()}
+function saveProject(){let n=$('#projName').value.trim();if(!n)return;data.projects.push({id:Date.now(),name:n,type:$('#projType').value,stage:$('#projStage').value,progress:+$('#projProgress').value});$('#projName').value='';$('#projectModal').close();persist()}
+function saveVault(){let n=$('#vaultName').value.trim();if(!n)return;data.vault.push({id:Date.now(),name:n,format:$('#vaultFormat').value,status:$('#vaultStatus').value});$('#vaultName').value='';$('#vaultModal').close();persist()}
+function del(kind,id){data[kind]=data[kind].filter(x=>x.id!==id);persist()}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function fmtDate(s){let d=new Date(s+'T12:00:00');return {day:d.toLocaleDateString('en-SG',{weekday:'short'}).toUpperCase(),num:d.getDate(),month:d.toLocaleDateString('en-SG',{month:'short'}).toUpperCase()}}
+function render(){
+ let now=new Date(), start=new Date(now);start.setHours(0,0,0,0);start.setDate(start.getDate()-((start.getDay()+6)%7));let end=new Date(start);end.setDate(end.getDate()+6);
+ $('#weekRange').textContent=start.toLocaleDateString('en-SG',{day:'numeric',month:'short'})+' — '+end.toLocaleDateString('en-SG',{day:'numeric',month:'short'});
+ let eligible=data.posts.filter(p=>['Scheduled','Posted'].includes(p.status)), weekly=eligible.filter(p=>{let d=new Date(p.date+'T12:00:00');return d>=start&&d<=end}), monthly=eligible.filter(p=>{let d=new Date(p.date+'T12:00:00');return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
+ setStat('tik',weekly.filter(p=>p.platform==='TikTok').length,3);setStat('short',weekly.filter(p=>p.platform==='YouTube Short').length,2);setStat('long',monthly.filter(p=>p.platform==='YouTube Long-form').length,1);
+ let upcoming=data.posts.filter(p=>new Date(p.date+'T23:59:59')>=now).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+ $('#upNext').innerHTML=upcoming.length?upcoming.map(p=>'<div class="upItem"><div><b>'+esc(p.title)+'</b><br><small>'+esc(p.platform)+' · '+esc(p.status)+'</small></div><small>'+new Date(p.date+'T12:00:00').toLocaleDateString('en-SG',{day:'numeric',month:'short'})+'</small></div>').join(''):'<div class="empty">Nothing scheduled. The algorithm is staring through the window.</div>';
+ $('#dashProjects').innerHTML=data.projects.length?data.projects.slice(0,3).map(projectHTML).join(''):'<div class="empty">No musical schemes yet. Suspicious.</div>';
+ renderSchedule();$('#projectList').innerHTML=data.projects.length?data.projects.map(projectHTML).join(''):'<div class="empty">The project department is hauntingly empty.</div>';
+ $('#vaultList').innerHTML=data.vault.length?data.vault.map(v=>'<div class="vaultItem"><button class="delete" onclick="del(\'vault\','+v.id+')">×</button><div class="eyebrow">'+esc(v.format)+'</div><h3>'+esc(v.name)+'</h3><span class="badge status">'+esc(v.status)+'</span></div>').join(''):'<div class="empty">The vault echoes dramatically. Add something.</div>';
+ $('#totalContent').textContent=data.posts.length;$('#totalPosted').textContent=data.posts.filter(p=>p.status==='Posted').length;$('#totalProjects').textContent=data.projects.length;
+ let originals=data.projects.filter(p=>p.type==='Original Song'), q=originals.length?Math.max(...originals.map(p=>p.progress)):0;$('#questBar').style.width=q+'%';$('#questText').textContent=q?('Closest original is '+q+'% there. This is becoming concerningly real.'):'Add an Original Song project to begin the grand quest.';
+}
+function setStat(k,n,g){$('#'+k+'Stat').textContent=n+' / '+g;$('#'+k+'Bar').style.width=Math.min(100,n/g*100)+'%'}
+function projectHTML(p){return '<div class="project"><button class="delete" onclick="del(\'projects\','+p.id+')">×</button><span class="pct">'+p.progress+'%</span><div class="eyebrow">'+esc(p.type)+'</div><h3>'+esc(p.name)+'</h3><span class="badge">'+esc(p.stage)+'</span><div class="bar"><i style="width:'+p.progress+'%"></i></div></div>'}
+let filter='all';$$('.chip').forEach(c=>c.onclick=()=>{$$('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');filter=c.dataset.filter;renderSchedule()});
+function renderSchedule(){let ps=data.posts.filter(p=>filter==='all'||p.platform===filter).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));$('#scheduleList').innerHTML=ps.length?ps.map(p=>{let d=fmtDate(p.date);return '<div class="scheduleItem"><div class="datebox">'+d.day+'<strong>'+d.num+'</strong>'+d.month+'</div><div><h3>'+esc(p.title)+'</h3><span class="badge">'+esc(p.platform)+'</span><span class="badge status">'+esc(p.status)+'</span> '+(p.time?'<small>'+p.time+'</small>':'')+(p.project?'<br><small>PROJECT: '+esc(p.project)+'</small>':'')+'</div><button class="secondary" onclick="del(\'posts\','+p.id+')">Remove</button></div>'}).join(''):'<div class="empty">No posts here yet. A pristine calendar. Terrifying.</div>'}
+function newQuote(){$('#quote').textContent=quotes[Math.floor(Math.random()*quotes.length)]}newQuote();render();
