@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brian Music Industries™</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div><div class="eyebrow">AN EXTREMELY LEGITIMATE MUSICAL ESTABLISHMENT</div><h1>BRIAN MUSIC<br>INDUSTRIES™ <span>♫</span></h1></div>
+  <button class="primary" onclick="openPost()">＋ ADD SOMETHING</button>
+</header>
+<nav>
+<button class="tab active" data-tab="dashboard">⌂ Dashboard</button><button class="tab" data-tab="schedule">▣ Schedule</button><button class="tab" data-tab="projects">♫ Projects</button><button class="tab" data-tab="vault">▤ Content Vault</button><button class="tab" data-tab="progress">↗ Progress</button>
+</nav>
+<main>
+<section id="dashboard" class="page active">
+ <div class="hero"><div><div class="eyebrow">GOOD AFTERNOON, BRIAN.</div><h2>Your music will unfortunately<br>not make itself.</h2><p id="heroMsg">Luckily, this establishment has a plan.</p></div><div class="record">♪</div></div>
+ <div class="sectionHead"><div><div class="eyebrow">OPERATIONS REPORT</div><h2>THIS WEEK</h2></div><div id="weekRange"></div></div>
+ <div class="stats">
+  <div class="stat"><b>♪ TIKTOK</b><strong id="tikStat">0 / 3</strong><div class="bar"><i id="tikBar"></i></div><small>scheduled or posted</small></div>
+  <div class="stat"><b>▶ YOUTUBE SHORTS</b><strong id="shortStat">0 / 2</strong><div class="bar"><i id="shortBar"></i></div><small>scheduled or posted</small></div>
+  <div class="stat"><b>▰ LONG-FORM</b><strong id="longStat">0 / 1</strong><div class="bar"><i id="longBar"></i></div><small>this month</small></div>
+ </div>
+ <div class="grid2">
+  <div class="card"><div class="sectionHead"><div><div class="eyebrow">THE IMPORTANT BIT</div><h3>UP NEXT</h3></div><button class="link" onclick="showTab('schedule')">See schedule →</button></div><div id="upNext"></div></div>
+  <div class="card message"><div class="eyebrow">A MESSAGE FROM MANAGEMENT</div><div class="quote" id="quote"></div><button class="dice" onclick="newQuote()">↻ another extremely important message</button></div>
+ </div>
+ <div class="card"><div class="sectionHead"><div><div class="eyebrow">THE ORIGINAL SONG SITUATION</div><h3>MAKE YOUR OWN MUSIC, BRIAN.</h3></div><button class="link" onclick="openProject()">＋ New project</button></div><div id="dashProjects"></div></div>
+</section>
+<section id="schedule" class="page">
+ <div class="sectionHead"><div><div class="eyebrow">THE CONTENT MACHINE</div><h2>POSTING SCHEDULE</h2><p>Planning three weeks ahead is not cheating. It is called being alarmingly organised.</p></div><button class="primary" onclick="openPost()">＋ SCHEDULE SOMETHING</button></div>
+ <div class="filters"><button class="chip on" data-filter="all">All</button><button class="chip" data-filter="TikTok">TikTok</button><button class="chip" data-filter="YouTube Short">Shorts</button><button class="chip" data-filter="YouTube Long-form">Long-form</button></div>
+ <div id="scheduleList"></div>
+</section>
+<section id="projects" class="page">
+ <div class="sectionHead"><div><div class="eyebrow">SONGS, COVERS & OTHER SCHEMES</div><h2>PROJECTS</h2><p>From tiny idea to actual music that exists outside Brian's head.</p></div><button class="primary" onclick="openProject()">＋ NEW PROJECT</button></div><div id="projectList" class="projectGrid"></div>
+</section>
+<section id="vault" class="page">
+ <div class="sectionHead"><div><div class="eyebrow">BREAK GLASS IN CASE OF CREATIVE DROUGHT</div><h2>THE CONTENT VAULT 🔐</h2><p>Things that exist already and therefore have no excuse not to be posted.</p></div><button class="primary" onclick="openVault()">＋ ADD TO VAULT</button></div><div id="vaultList" class="vaultGrid"></div>
+</section>
+<section id="progress" class="page">
+ <div class="sectionHead"><div><div class="eyebrow">PROOF THAT THINGS ARE HAPPENING</div><h2>PROGRESS</h2></div></div>
+ <div class="stats"><div class="stat"><b>TOTAL CONTENT</b><strong id="totalContent">0</strong><small>things planned</small></div><div class="stat"><b>POSTED</b><strong id="totalPosted">0</strong><small>released into the wild</small></div><div class="stat"><b>SONGS / PROJECTS</b><strong id="totalProjects">0</strong><small>musical schemes</small></div></div>
+ <div class="card"><div class="eyebrow">THE GRAND QUEST</div><h3>RELEASE AN ORIGINAL SONG</h3><div class="bigbar"><i id="questBar"></i></div><p id="questText"></p></div>
+</section>
+</main>
+<dialog id="postModal"><form method="dialog" id="postForm"><div class="modalHead"><div><div class="eyebrow">FEED THE ALGORITHM</div><h3>SCHEDULE CONTENT</h3></div><button value="cancel" class="x">×</button></div>
+<label>What are we posting?<input id="postTitle" required placeholder="e.g. Interstellar piano cover"></label>
+<div class="form2"><label>Platform<select id="postPlatform"><option>TikTok</option><option>YouTube Short</option><option>YouTube Long-form</option></select></label><label>Status<select id="postStatus"><option>Idea</option><option>Recorded</option><option>Edited</option><option selected>Scheduled</option><option>Posted</option></select></label></div>
+<div class="form2"><label>Posting date<input id="postDate" type="date" required></label><label>Time<input id="postTime" type="time"></label></div>
+<label>Project / song<input id="postProject" placeholder="Optional"></label><menu><button value="cancel" class="secondary">Never mind</button><button type="button" class="primary" onclick="savePost()">SAVE IT →</button></menu></form></dialog>
+<dialog id="projectModal"><form method="dialog"><div class="modalHead"><div><div class="eyebrow">A NEW MUSICAL SCHEME</div><h3>ADD PROJECT</h3></div><button value="cancel" class="x">×</button></div>
+<label>Project / song name<input id="projName" placeholder="Original Song #1"></label><div class="form2"><label>Type<select id="projType"><option>Original Song</option><option>Piano Instrumental</option><option>Cover</option><option>Other</option></select></label><label>Stage<select id="projStage"><option>tiny idea</option><option>writing</option><option>demo</option><option>arranging</option><option>recording</option><option>mixing</option><option>ready</option><option>RELEASED</option></select></label></div><label>Progress %<input id="projProgress" type="range" min="0" max="100" value="10" oninput="rangeVal.textContent=this.value+'%'"><span id="rangeVal">10%</span></label><menu><button value="cancel" class="secondary">Cancel</button><button type="button" class="primary" onclick="saveProject()">MAKE IT REAL →</button></menu></form></dialog>
+<dialog id="vaultModal"><form method="dialog"><div class="modalHead"><div><div class="eyebrow">INTO THE VAULT</div><h3>ADD CONTENT</h3></div><button value="cancel" class="x">×</button></div><label>Name<input id="vaultName" placeholder="La La Land instrumental"></label><div class="form2"><label>Format<select id="vaultFormat"><option>Piano video</option><option>Short clip</option><option>Full video</option><option>Original teaser</option><option>Other</option></select></label><label>Status<select id="vaultStatus"><option>Recorded</option><option>Needs editing</option><option>READY TO POST</option></select></label></div><menu><button value="cancel" class="secondary">Cancel</button><button type="button" class="primary" onclick="saveVault()">LOCK IT UP →</button></menu></form></dialog>
+<footer>BRIAN MUSIC INDUSTRIES™ · EST. WHEN SOMEONE FINALLY MADE A SPREADSHEET FUN</footer>
+<script src="app.js"></script>
+</body></html>
