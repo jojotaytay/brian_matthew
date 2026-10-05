@@ -11,7 +11,7 @@
   <button class="primary" onclick="openPost()">＋ ADD SOMETHING</button>
 </header>
 <nav>
-<button class="tab active" data-tab="dashboard">⌂ Dashboard</button><button class="tab" data-tab="schedule">▣ Schedule</button><button class="tab" data-tab="projects">♫ Projects</button><button class="tab" data-tab="vault">▤ Content Vault</button><button class="tab" data-tab="progress">↗ Progress</button>
+<button class="tab active" data-tab="dashboard">⌂ Dashboard</button><button class="tab" data-tab="schedule">▣ Schedule</button><button class="tab" data-tab="projects">♫ Projects</button><button class="tab" data-tab="vault">▤ Content Vault</button><button class="tab" data-tab="progress">↗ Progress</button><button class="tab" data-tab="youtube">▶ YouTube</button>
 </nav>
 <main>
 <section id="dashboard" class="page active">
@@ -44,6 +44,11 @@
  <div class="stats"><div class="stat"><b>TOTAL CONTENT</b><strong id="totalContent">0</strong><small>things planned</small></div><div class="stat"><b>POSTED</b><strong id="totalPosted">0</strong><small>released into the wild</small></div><div class="stat"><b>SONGS / PROJECTS</b><strong id="totalProjects">0</strong><small>musical schemes</small></div></div>
  <div class="card"><div class="eyebrow">THE GRAND QUEST</div><h3>RELEASE AN ORIGINAL SONG</h3><div class="bigbar"><i id="questBar"></i></div><p id="questText"></p></div>
 </section>
+<section id="youtube" class="page">
+ <div class="sectionHead"><div><div class="eyebrow">AUTHORIZED MUSICAL DISTRIBUTION DEPARTMENT</div><h2>YOUTUBE CONNECTION</h2><p>Connect Brian's channel so the posting pack can upload and schedule YouTube videos.</p></div></div>
+ <div class="grid2"><div class="card"><div class="eyebrow">ACCOUNT</div><h3 id="ytConnection">NOT CONNECTED</h3><p id="ytHelp">Add your Google OAuth Client ID to <code>youtube-config.js</code>, then connect Brian's account.</p><button class="primary" id="ytConnect" onclick="connectYouTube()">CONNECT YOUTUBE →</button> <button class="secondary" id="ytDisconnect" onclick="disconnectYouTube()" hidden>Disconnect</button></div>
+ <div class="card message"><div class="eyebrow">IMPORTANT BORING THING</div><h3>BRIAN APPROVES ACCESS.</h3><p>The site never needs his Google password. Google shows the permission screen and issues temporary access to upload videos.</p></div></div>
+</section>
 </main>
 <dialog id="packModal"><div class="modalHead"><div><div class="eyebrow">EVERYTHING FUTURE BRIAN NEEDS</div><h3 id="packTitle">POSTING PACK</h3></div><button class="x" onclick="packModal.close()">×</button></div><div id="packBody"></div></dialog>
 <dialog id="postModal"><form method="dialog" id="postForm"><div class="modalHead"><div><div class="eyebrow">FEED THE ALGORITHM</div><h3>SCHEDULE CONTENT</h3></div><button value="cancel" class="x">×</button></div>
@@ -54,10 +59,12 @@
 <div class="postingPack"><div class="eyebrow">POSTING PACK · OPTIONAL BUT GLORIOUS</div>
 <label>Caption / description<textarea id="postCaption" rows="4" placeholder="Write the caption once. Future Brian says thank you."></textarea></label>
 <div class="form2"><label>Hashtags<input id="postHashtags" placeholder="#piano #music"></label><label>Video / file link<input id="postVideo" placeholder="Drive, Dropbox, etc."></label></div>
-<div class="form2"><label>Thumbnail status<select id="postThumb"><option>Not needed</option><option>Needs making</option><option>Ready ✓</option></select></label><label>Notes<input id="postNotes" placeholder="Anything Future Brian needs"></label></div></div><menu><button value="cancel" class="secondary">Never mind</button><button type="button" class="primary" onclick="savePost()">SAVE IT →</button></menu></form></dialog>
+<div class="form2"><label>YouTube video file (chosen when posting)<input id="postLocalFile" type="file" accept="video/*"><small>For privacy, the browser cannot remember the file after you close/reload the page.</small></label><label>Thumbnail status<select id="postThumb"><option>Not needed</option><option>Needs making</option><option>Ready ✓</option></select></label><label>Notes<input id="postNotes" placeholder="Anything Future Brian needs"></label></div></div><menu><button value="cancel" class="secondary">Never mind</button><button type="button" class="primary" onclick="savePost()">SAVE IT →</button></menu></form></dialog>
 <dialog id="projectModal"><form method="dialog"><div class="modalHead"><div><div class="eyebrow">A NEW MUSICAL SCHEME</div><h3>ADD PROJECT</h3></div><button value="cancel" class="x">×</button></div>
 <label>Project / song name<input id="projName" placeholder="Original Song #1"></label><div class="form2"><label>Type<select id="projType"><option>Original Song</option><option>Piano Instrumental</option><option>Cover</option><option>Other</option></select></label><label>Stage<select id="projStage"><option>tiny idea</option><option>writing</option><option>demo</option><option>arranging</option><option>recording</option><option>mixing</option><option>ready</option><option>RELEASED</option></select></label></div><label>Progress %<input id="projProgress" type="range" min="0" max="100" value="10" oninput="rangeVal.textContent=this.value+'%'"><span id="rangeVal">10%</span></label><menu><button value="cancel" class="secondary">Cancel</button><button type="button" class="primary" onclick="saveProject()">MAKE IT REAL →</button></menu></form></dialog>
 <dialog id="vaultModal"><form method="dialog"><div class="modalHead"><div><div class="eyebrow">INTO THE VAULT</div><h3>ADD CONTENT</h3></div><button value="cancel" class="x">×</button></div><label>Name<input id="vaultName" placeholder="La La Land instrumental"></label><div class="form2"><label>Format<select id="vaultFormat"><option>Piano video</option><option>Short clip</option><option>Full video</option><option>Original teaser</option><option>Other</option></select></label><label>Status<select id="vaultStatus"><option>Recorded</option><option>Needs editing</option><option>READY TO POST</option></select></label></div><menu><button value="cancel" class="secondary">Cancel</button><button type="button" class="primary" onclick="saveVault()">LOCK IT UP →</button></menu></form></dialog>
 <footer>BRIAN MUSIC INDUSTRIES™ · EST. WHEN SOMEONE FINALLY MADE A SPREADSHEET FUN</footer>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="youtube-config.js"></script>
 <script src="app.js"></script>
 </body></html>
